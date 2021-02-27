@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: console-manage
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        service: console-manage
+        metadata:
+          version: v1
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        namespace: a2294d4a-a9ea-427d-992b-2ed3575d8f0f
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  config: http://127.0.0.1:8848/nacos/v1/cs/configs?tenant=a2294d4a-a9ea-427d-992b-2ed3575d8f0f&group=DEFAULT_GROUP&dataId=logback.xml
+#server:
+#  port: 8022

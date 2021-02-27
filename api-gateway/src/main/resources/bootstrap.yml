@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: api-gateway
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        service: api-gateway
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        namespace: c438487b-64c3-4d6c-ad80-10cf66be0c70
+logging:
+  config: http://127.0.0.1:8848/nacos/v1/cs/configs?tenant=c438487b-64c3-4d6c-ad80-10cf66be0c70&group=DEFAULT_GROUP&dataId=logback.xml
