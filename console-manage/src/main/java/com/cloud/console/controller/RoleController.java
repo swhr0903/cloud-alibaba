@@ -11,7 +11,6 @@ import com.cloud.console.service.RoleService;
 import com.cloud.console.vo.Auths;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +41,6 @@ public class RoleController {
   }
 
   @GetMapping(value = "/getRolesPaging")
-  @PreAuthorize("authenticated and hasPermission(4, 'query')")
   public Paging getRolesPaging(Integer limit, Integer offset, String code, String name)
       throws Exception {
     return roleService.getRoles(limit, offset, code, name);
@@ -55,7 +53,6 @@ public class RoleController {
   }
 
   @PostMapping(value = "/add")
-  @PreAuthorize("authenticated and hasPermission(4, 'add')")
   public Result add(Role role) throws Exception {
     Result result = new Result();
     roleService.addRole(role);
@@ -67,7 +64,6 @@ public class RoleController {
   }
 
   @PatchMapping(value = "/update")
-  @PreAuthorize("authenticated and hasPermission(4, 'update')")
   public Result update(Role role) throws Exception {
     Result result = new Result();
     roleService.updateRole(role);
@@ -79,7 +75,6 @@ public class RoleController {
   }
 
   @DeleteMapping(value = "/del")
-  @PreAuthorize("authenticated and hasPermission(4, 'del')")
   public Result del(@RequestBody List<Role> roles) throws Exception {
     Result result = new Result();
     roleService.delRole(roles);
@@ -91,7 +86,6 @@ public class RoleController {
   }
 
   @PostMapping(value = "/auth")
-  @PreAuthorize("authenticated and hasPermission(4, 'auth')")
   public Result auth(@RequestBody Auths auths) throws Exception {
     Result result = new Result();
     roleService.auth(auths);

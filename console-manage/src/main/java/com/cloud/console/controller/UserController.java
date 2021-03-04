@@ -4,7 +4,9 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.alibaba.fastjson.JSON;
 import com.cloud.console.Constants;
 import com.cloud.console.Result;
+import com.cloud.console.common.Constant;
 import com.cloud.console.common.Logger;
+import com.cloud.console.common.TokenUtils;
 import com.cloud.console.encrypt.RSAEncrypt;
 import com.cloud.console.po.User;
 import com.cloud.console.service.Paging;
@@ -14,8 +16,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -41,7 +41,6 @@ public class UserController {
     Logger logger;
 
     @GetMapping("/getUsers")
-    //@PreAuthorize("authenticated and hasPermission(3, 'query')")
     public Paging getUsers(
             Integer limit,
             Integer offset,
@@ -67,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/isExist/{userName}")
-    public Result isExist(@PathVariable String userName) {
+    public Result isExist(@PathVariable String userName, HttpServletRequest request) {
         com.cloud.console.vo.User params = new com.cloud.console.vo.User();
         params.setUsername(userName);
         User user = userService.getUser(params);
@@ -103,7 +102,6 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("authenticated and hasPermission(3, 'update')")
     public Result edit(User user) throws Exception {
         Result result = new Result();
         if (user != null && StringUtils.isNotBlank(user.getUsername())) {
@@ -116,7 +114,6 @@ public class UserController {
     }
 
     @DeleteMapping("/del")
-    @PreAuthorize("authenticated and hasPermission(3, 'del')")
     public Result del(@RequestBody List<User> users) throws Exception {
         Result result = new Result();
         userService.delUser(users);
@@ -127,7 +124,6 @@ public class UserController {
     }
 
     @PostMapping("/author")
-    @PreAuthorize("authenticated and hasPermission(3, 'auth')")
     public Result auth(Long userId, String roles) throws Exception {
         Result result = new Result();
         userService.auth(userId, roles);
@@ -147,8 +143,7 @@ public class UserController {
             Object obj = i.next();
             multipartFile = (MultipartFile) map.get(obj);
         }
-        String userName =
-                (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userName = TokenUtils.getUserName(request.getHeader(Constant.TOKEN_HEADER_STRING));
         String filePath = "avatar/";
         userService.saveImg(filePath, userName, multipartFile);
         result.setCode("1");

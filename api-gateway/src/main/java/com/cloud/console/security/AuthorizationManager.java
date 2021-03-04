@@ -42,26 +42,25 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             return Mono.just(new AuthorizationDecision(true));
         }
         // 非管理端路径无需鉴权直接放行
-        /*if (!pathMatcher.match(Constants.ADMIN_URL_PATTERN, path)) {
+        if (pathMatcher.match(Constants.OAUTH_URL_PATTERN, path)) {
             return Mono.just(new AuthorizationDecision(true));
-        }*/
+        }
         //默认admin直接放行
         String token = request.getHeaders().getFirst(Constants.JWT_TOKEN_HEADER);
+        // token为空拒绝访问
+        if (StrUtil.isBlank(token)) {
+            return Mono.just(new AuthorizationDecision(false));
+        }
         try {
             JWSObject tokenObject = JWSObject.parse(token);
-            String userInfo=tokenObject.getPayload().toString();
-            String userName= JSON.parseObject(userInfo).getString("user_name");
-            if("admin".equals(userName)){
+            String userInfo = tokenObject.getPayload().toString();
+            String userName = JSON.parseObject(userInfo).getString("user_name");
+            if ("admin".equals(userName)) {
                 return Mono.just(new AuthorizationDecision(true));
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // token为空拒绝访问
-        if (StrUtil.isBlank(token)) {
-            return Mono.just(new AuthorizationDecision(false));
-        }
-
         // 从缓存取资源权限角色关系列表
         Map<Object, Object> permissionRoles = redisTemplate.opsForHash().entries(Constants.PERMISSION_ROLES_KEY);
         Iterator<Object> iterator = permissionRoles.keySet().iterator();
@@ -74,7 +73,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             }
         }
         log.info("require authorities:{}", authorities);
-
         Mono<AuthorizationDecision> authorizationDecisionMono = mono
                 .filter(Authentication::isAuthenticated)
                 .flatMapIterable(Authentication::getAuthorities)

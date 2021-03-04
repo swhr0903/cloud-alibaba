@@ -9,10 +9,8 @@ import com.cloud.console.service.DictService;
 import com.cloud.console.service.Paging;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +42,6 @@ public class DictController {
   }
 
   @GetMapping(value = "/getDictsPaging")
-  @PreAuthorize("authenticated and hasPermission(2, 'query')")
   public Paging getDictPaging(Integer limit, Integer offset, String name) throws Exception {
     return dictService.getDicts(limit, offset, name);
   }
@@ -57,7 +54,6 @@ public class DictController {
   }
 
   @PatchMapping(value = "/update")
-  @PreAuthorize("authenticated and hasPermission(2, 'update')")
   @ApiOperation("系统字段修改")
   public Result edit(Dict dict) throws Exception {
     Result result = new Result();
@@ -69,7 +65,6 @@ public class DictController {
   }
 
   @DeleteMapping(value = "/del")
-  @PreAuthorize("authenticated and hasPermission(2, 'del')")
   public Result del(@RequestBody List<Dict> modules) throws Exception {
     Result result = new Result();
     dictService.delDict(modules);

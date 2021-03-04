@@ -13,7 +13,6 @@ import com.cloud.console.vo.TreeNode;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +44,6 @@ public class ModuleController {
   }
 
   @GetMapping(value = "/getModulesPaging")
-  @PreAuthorize("authenticated and hasPermission(2, 'query')")
   public Paging getModulesPaging(Integer limit, Integer offset, String name) throws Exception {
     return moduleService.getModules(limit, offset, name);
   }
@@ -58,7 +56,6 @@ public class ModuleController {
   }
 
   @PostMapping(value = "/add")
-  @PreAuthorize("authenticated and hasPermission(2, 'add')")
   public Result add(Module module) throws Exception {
     Result result = new Result();
     Long parentId = module.getParent_id();
@@ -74,7 +71,6 @@ public class ModuleController {
   }
 
   @PatchMapping(value = "/update")
-  @PreAuthorize("authenticated and hasPermission(2, 'update')")
   public Result edit(Module module) throws Exception {
     Result result = new Result();
     Long parentId = module.getParent_id();
@@ -90,7 +86,6 @@ public class ModuleController {
   }
 
   @DeleteMapping(value = "/del")
-  @PreAuthorize("authenticated and hasPermission(2, 'del')")
   public Result del(@RequestBody List<Module> modules) throws Exception {
     Result result = new Result();
     moduleService.delModule(modules);
