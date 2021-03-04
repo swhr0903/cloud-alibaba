@@ -20,7 +20,7 @@ $(function () {
         var publicKey;
         $.ajax({
             url: '/encrypt/getPublicKey/' + uaerName,
-            type: 'get',
+            type: 'post',
             async: false,
             contentType: "json",
             success: function (result) {

@@ -41,7 +41,7 @@ public class UserController {
     Logger logger;
 
     @GetMapping("/getUsers")
-    @PreAuthorize("authenticated and hasPermission(3, 'query')")
+    //@PreAuthorize("authenticated and hasPermission(3, 'query')")
     public Paging getUsers(
             Integer limit,
             Integer offset,
