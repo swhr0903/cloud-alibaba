@@ -2,6 +2,8 @@ package com.cloud.console.security;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
+import com.nimbusds.jose.JWSObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +19,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import reactor.core.publisher.Mono;
 
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,8 +34,6 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
-
-
         ServerHttpRequest request = authorizationContext.getExchange().getRequest();
         String path = request.getMethodValue() + "_" + request.getURI().getPath();
         PathMatcher pathMatcher = new AntPathMatcher();
@@ -40,19 +41,26 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         if (request.getMethod() == HttpMethod.OPTIONS) {
             return Mono.just(new AuthorizationDecision(true));
         }
-
         // 非管理端路径无需鉴权直接放行
-        if (!pathMatcher.match(Constants.ADMIN_URL_PATTERN, path)) {
+        /*if (!pathMatcher.match(Constants.ADMIN_URL_PATTERN, path)) {
             return Mono.just(new AuthorizationDecision(true));
-        }
-
-
-        // token为空拒绝访问
+        }*/
+        //默认admin直接放行
         String token = request.getHeaders().getFirst(Constants.JWT_TOKEN_HEADER);
+        try {
+            JWSObject tokenObject = JWSObject.parse(token);
+            String userInfo=tokenObject.getPayload().toString();
+            String userName= JSON.parseObject(userInfo).getString("user_name");
+            if("admin".equals(userName)){
+                return Mono.just(new AuthorizationDecision(true));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // token为空拒绝访问
         if (StrUtil.isBlank(token)) {
             return Mono.just(new AuthorizationDecision(false));
         }
-
 
         // 从缓存取资源权限角色关系列表
         Map<Object, Object> permissionRoles = redisTemplate.opsForHash().entries(Constants.PERMISSION_ROLES_KEY);

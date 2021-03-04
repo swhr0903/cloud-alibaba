@@ -49,5 +49,5 @@ public class Constants {
     /**
      * 后台管理接口路径匹配
      */
-    public static String ADMIN_URL_PATTERN = "*_/youlai-admin/**";
+    public static String ADMIN_URL_PATTERN = "*_/manage/**";
 }

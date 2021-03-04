@@ -33,10 +33,6 @@ public class WeightRoundRibonFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         //System.out.println(Thread.currentThread().getName());
-        /*String uri = exchange.getRequest().getURI().toString();
-        if (uri.contains("login") || uri.contains("index")) {
-            return chain.filter(exchange);
-        }*/
         String version = exchange.getRequest().getHeaders().getFirst("version");
         if (StringUtils.isNotBlank(version)) {
             RibbonFilterContext currentContext = RibbonFilterContextHolder.getCurrentContext();
