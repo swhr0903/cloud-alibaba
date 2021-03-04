@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/isExist/{userName}")
-    public Result isExist(@PathVariable String userName, HttpServletRequest request) {
+    public Result isExist(@PathVariable String userName) {
         com.cloud.console.vo.User params = new com.cloud.console.vo.User();
         params.setUsername(userName);
         User user = userService.getUser(params);
