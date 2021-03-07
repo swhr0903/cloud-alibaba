@@ -71,8 +71,6 @@ public class AuthController {
         String accessToken = request.getParameter("access_token");
         String code = StringUtils.isNoneBlank(accessToken) ? accessToken : request.getParameter("code");
         Map<String, String> map = new HashMap<>();
-        map.put("client_id", "web");
-        map.put("client_secret", "$2a$10$SOL5PyvzJzzRWfam8ykp3OmdRkdFzPCgQNq02arvDYPHcWYkwS/ZK");
         map.put("code", code);
         return map;
     }
