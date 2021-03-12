@@ -1,4 +1,4 @@
-package com.cloud.console.Controller;
+package com.cloud.console.controller;
 
 import cn.hutool.crypto.digest.BCrypt;
 import com.cloud.console.Constants;

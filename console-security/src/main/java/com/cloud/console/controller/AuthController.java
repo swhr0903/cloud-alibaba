@@ -1,4 +1,4 @@
-package com.cloud.console.Controller;
+package com.cloud.console.controller;
 
 import com.cloud.console.Constants;
 import com.cloud.console.common.Result;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class AuthController {
     @PostMapping("/token")
     public Result postAccessToken(
             @ApiIgnore Principal principal,
-            @ApiIgnore @RequestParam Map<String, String> parameters
+            @ApiIgnore @RequestParam Map<String, String> parameters, HttpServletResponse response
     ) throws Exception {
         String clientId = parameters.get(Constants.JWT_CLIENT_ID_KEY);
         switch (clientId) {
@@ -62,6 +63,14 @@ public class AuthController {
                         .refreshToken(oAuth2AccessToken.getRefreshToken().getValue())
                         .expiresIn(oAuth2AccessToken.getExpiresIn())
                         .build();
+                /*Cookie cookie = new Cookie(Constants.ACCESS_TOKEN_KEY, oauth2Token.getAccessToken());
+                cookie.setMaxAge(oAuth2AccessToken.getExpiresIn());
+                cookie.setPath("/");
+                response.addCookie(cookie);
+                cookie = new Cookie(Constants.REFRESH_TOKEN_KEY, oauth2Token.getRefreshToken());
+                cookie.setMaxAge(oAuth2AccessToken.getExpiresIn() * 10);
+                cookie.setPath("/");
+                response.addCookie(cookie);*/
                 return Result.success(oauth2Token);
         }
     }
@@ -79,7 +88,8 @@ public class AuthController {
     private MemberFeignService memberFeignService;
     private PasswordEncoder passwordEncoder;
 
-    public Result handleForWxAuth(Principal principal, Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
+    public Result handleForWxAuth(Principal principal, Map<String, String> parameters) throws
+    HttpRequestMethodNotSupportedException {
 
         String code = parameters.get("code");
 
@@ -112,7 +122,8 @@ public class AuthController {
                     .setGender(Integer.valueOf(userInfo.getGender()))
                     .setOpenid(openid)
                     .setUsername(openid)
-                    .setPassword(passwordEncoder.encode(openid).replace(AuthConstants.BCRYPT, Strings.EMPTY)) // 加密密码移除前缀加密方式 {bcrypt}
+                    .setPassword(passwordEncoder.encode(openid).replace(AuthConstants.BCRYPT, Strings.EMPTY)) //
+                    加密密码移除前缀加密方式 {bcrypt}
                     .setStatus(GlobalConstants.STATUS_NORMAL_VALUE);
 
             Result res = memberFeignService.add(user);

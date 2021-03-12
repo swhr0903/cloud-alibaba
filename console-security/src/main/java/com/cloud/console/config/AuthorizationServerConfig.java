@@ -17,8 +17,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -30,6 +28,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import reactor.core.publisher.Flux;
 
 import javax.sql.DataSource;
 import java.security.KeyPair;
@@ -149,7 +148,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     public static void main(String[] args) {
-        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("123456"));
+        /*PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+        System.out.println(passwordEncoder.encode("123456"));*/
+        Flux.create(sink -> {
+            for (char i = 'a'; i <= 'z'; i++) {
+                sink.next(i);
+            }
+            sink.complete();
+        }).subscribe(System.out::print);
     }
 }

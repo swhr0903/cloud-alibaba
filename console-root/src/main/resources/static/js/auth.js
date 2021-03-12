@@ -98,7 +98,7 @@ $(function () {
             type: "GET",
             url: "/",
             beforeSend: function (request) {
-                request.setRequestHeader("Authorization", "Bearer " + access_code);
+                request.setRequestHeader("Authorization", access_code);
             }
         });
     }

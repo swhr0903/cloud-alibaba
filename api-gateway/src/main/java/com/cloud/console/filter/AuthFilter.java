@@ -60,10 +60,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
         JSONObject jsonObject = JSONUtil.parseObj(payload);
         String jti = jsonObject.getStr(Constants.JWT_JTI_KEY);
         Boolean isBlack = redisTemplate.hasKey(Constants.TOKEN_BLACKLIST_PREFIX + jti);
+        //是否黑名单
         if (isBlack) {
             return WebUtils.writeFailedToResponse(response, ResultCode.TOKEN_INVALID_OR_EXPIRED);
         }
+        //是否过期，过期则.....
+        /*Long expTime = Long.parseLong(jsonObject.getStr("exp"));
+        Boolean isExpired = DateUtils.isBefore(new Date(expTime * 1000), new Date(), 0);
+        if (isExpired) {
 
+        }*/
         // 存在token且不是黑名单，request写入JWT的载体信息
         request = exchange.getRequest().mutate()
                 .header(Constants.JWT_PAYLOAD_KEY, payload)

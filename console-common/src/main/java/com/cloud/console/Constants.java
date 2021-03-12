@@ -4,6 +4,9 @@ package com.cloud.console;
  * Created by Frank on 2017/8/16.
  */
 public class Constants {
+    public static final String ACCESS_TOKEN_KEY = "access_token";
+    public static final String REFRESH_TOKEN_KEY = "refresh_token";
+
     public static final String PRIVATE_KEY = "private_key";
 
     public static final String PUBLIC_KEY = "public_key";

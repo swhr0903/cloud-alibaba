@@ -1,4 +1,4 @@
-package com.cloud.console.Controller;
+package com.cloud.console.controller;
 
 import com.cloud.console.Constants;
 import com.cloud.console.common.Result;

@@ -45,12 +45,12 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         if (pathMatcher.match(Constants.OAUTH_URL_PATTERN, path)) {
             return Mono.just(new AuthorizationDecision(true));
         }
-        //默认admin直接放行
         String token = request.getHeaders().getFirst(Constants.JWT_TOKEN_HEADER);
         // token为空拒绝访问
         if (StrUtil.isBlank(token)) {
             return Mono.just(new AuthorizationDecision(false));
         }
+        //admin直接放行
         try {
             JWSObject tokenObject = JWSObject.parse(token);
             String userInfo = tokenObject.getPayload().toString();
